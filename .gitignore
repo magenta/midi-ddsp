@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# logs
+logs/
+
+# pycharm
+.idea/
+
 # Distribution / packaging
 .Python
 build/
@@ -127,3 +133,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+*.ipynb
+.notebooks/
