@@ -61,7 +61,7 @@ Side note:
 
 If one download the dataset to a different location, please change the `data_dir` parameter in `train_midi_ddsp.sh`.
 
-The training of MIDI-DDSP takes approximately 24 hours on a single RTX 8000. The training code for now does not support
+The training of MIDI-DDSP takes approximately 18 hours on a single RTX 8000. The training code for now does not support
 multi-GPU training. We recommend using a GPU with more than 24G of memory when training Synthesis Generator in batch
 size of 16. For a GPU with less memory, please consider using a smaller batch size and change the batch size
 in `train_midi_ddsp.sh`.

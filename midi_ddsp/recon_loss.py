@@ -41,7 +41,7 @@ class EvalReconLossGroup(tfkl.Layer):
       }
       return loss_dict
 
-    loss_f0 = self.f0_loss(outputs['params_pred']['f0_midi'],
+    loss_f0 = self.f0_loss(outputs['params_pred']['f0_output']['f0_midi'],
                            ddsp.core.hz_to_midi(inputs['f0_hz']),
                            weights=outputs['f0_loss_weights'])
     loss_amp = self.amps_loss(outputs['amps_pred'], outputs['amps'])

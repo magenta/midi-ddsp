@@ -45,9 +45,9 @@ class MIDIExpressionAE(tf.keras.Model):
           Note Expression Controls           │       │
             (conditioning_dict)    ──────────┤       │
                     ▲                        │       │
-    Feature         │                        ├────┐  │
-   Extraction       │                        │    │  │
-                    │                        ▼    │  │ Synthesis Generator
+      Feature       │                        ├────┐  │
+     Extraction     │                        │    │  │
+  (gen_cond_dict)   │                        ▼    │  │ Synthesis Generator
            Synthesis Parameters             f0    │  │   (midi_decoder)
             (f0,amps,hd,noise)               │    │  │
                     ▲                        ├────┘  │
