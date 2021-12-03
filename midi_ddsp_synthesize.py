@@ -5,7 +5,7 @@ import pretty_midi
 import os
 import argparse
 import glob
-from tqdm import tqdm
+from tqdm.autonotebook import tqdm
 
 from data_handling.instrument_name_utils import \
   INST_NAME_TO_MIDI_PROGRAM_DICT, MIDI_PROGRAM_TO_INST_ID_DICT

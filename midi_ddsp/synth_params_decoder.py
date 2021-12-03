@@ -1,5 +1,5 @@
 """Decoders that predicts synthesis parameters from latent sequence z."""
-from tqdm import tqdm
+from tqdm.autonotebook import tqdm
 import tensorflow as tf
 import ddsp
 from ddsp.training import nn

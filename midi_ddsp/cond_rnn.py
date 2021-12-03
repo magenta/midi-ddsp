@@ -1,7 +1,7 @@
 """Abstract model for conditional autoregressive RNN used in MIDI-DDSP."""
 
 import tensorflow as tf
-from tqdm import tqdm
+from tqdm.autonotebook import tqdm
 
 tfk = tf.keras
 tfkl = tfk.layers

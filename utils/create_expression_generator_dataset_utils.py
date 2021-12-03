@@ -5,7 +5,7 @@ import ddsp
 import tensorflow as tf
 import copy
 import glob
-from tqdm import tqdm
+from tqdm.autonotebook import tqdm
 import os
 import matplotlib.pyplot as plt
 from utils.file_utils import pickle_dump

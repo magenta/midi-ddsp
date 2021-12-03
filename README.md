@@ -84,7 +84,7 @@ path which we will refer to `<path-to-checkpoint-folder>`.
 To use command-line synthesis to synthesize a midi file, run the following command:
 
 ```
-synthesize_midi.py \
+midi_ddsp_synthesize.py \
 --midi_path <path-to-midi> \
 --output_dir <output-dir> \
 --synthesis_generator_weight_path <path-to-checkpoint-folder/synthesis_generator/50000>
