@@ -8,13 +8,13 @@ import glob
 from tqdm.autonotebook import tqdm
 import os
 import matplotlib.pyplot as plt
+from ddsp.training.data import UrmpMidiUnsegmented
 from utils.file_utils import pickle_dump
 from utils.inference_utils import to_length, make_same_length, get_process_group
 from utils.audio_io import save_wav
 from midi_ddsp.interpretable_conditioning import \
   get_interpretable_conditioning, get_amplitudes_max_pos, get_vibrato_feature, \
   extract_harm_controls
-from data_handling.urmp_tfrecord_unbatched_dataloader import UrmpMidiUnbatched
 
 
 # Sample the whole piece in URMP dataset.
@@ -343,11 +343,11 @@ def dump_expression_generator_dataset(model, data_dir, output_dir):
   os.makedirs(pickle_output_dir, exist_ok=True)
   os.makedirs(stats_plot_output_dir, exist_ok=True)
 
-  test_data_loader = UrmpMidiUnbatched(data_dir, instrument_key='all',
+  test_data_loader = UrmpMidiUnsegmented(data_dir, instrument_key='all',
                                        split='test', suffix='unbatched')
   test_dataset = test_data_loader.get_batch(batch_size=1, shuffle=True,
                                             repeats=1)
-  train_data_loader = UrmpMidiUnbatched(data_dir, instrument_key='all',
+  train_data_loader = UrmpMidiUnsegmented(data_dir, instrument_key='all',
                                         split='train', suffix='unbatched')
   train_dataset = train_data_loader.get_batch(batch_size=1, shuffle=True,
                                               repeats=1)
