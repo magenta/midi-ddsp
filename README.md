@@ -18,10 +18,10 @@ from [DDSP](https://github.com/magenta/ddsp).
 
 ## Train MIDI-DDSP
 
-To train MIDI-DDSP, please first clone the ddsp repository:
+To train MIDI-DDSP, please first clone the MIDI-DDSP repository:
 
 ```
-git clone https://github.com/magenta/ddsp.git
+git clone https://github.com/magenta/midi-ddsp.git
 ```
 
 Then, enter this directory and install the libraries needed:
@@ -84,7 +84,7 @@ path which we will refer to `<path-to-checkpoint-folder>`.
 To use command-line synthesis to synthesize a midi file, run the following command:
 
 ```
-midi_ddsp_synthesize.py \
+python midi_ddsp_synthesize.py \
 --midi_path <path-to-midi> \
 --output_dir <output-dir> \
 --synthesis_generator_weight_path <path-to-checkpoint-folder/synthesis_generator/50000>
