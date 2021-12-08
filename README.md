@@ -4,7 +4,7 @@
 
 # MIDI-DDSP: Detailed Control of Musical Performance via Hierarchical Modeling
 
-[Demos](https://midi-ddsp.github.io/) | Blog Post | [Colab Notebook](https://colab.research.google.com/drive/18kbkyTTgrgXYPaOh1tiICn3_yJGMsUNJ?usp=sharing) | Paper
+[Demos](https://midi-ddsp.github.io/) | Blog Post | [Colab Notebook](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/colab/MIDI_DDSP_Demo.ipynb) | Paper
 
 MIDI-DDSP is a hierarchical audio generation model for synthesizing MIDI expanded
 from [DDSP](https://github.com/magenta/ddsp).
@@ -14,7 +14,7 @@ from [DDSP](https://github.com/magenta/ddsp).
 * [Check out the blog post 💻]()
 * [Read the original paper 📄]()
 * [Listen to some examples 🔈](https://midi-ddsp.github.io/)
-* [Try out MIDI Synthesis using MIDI-DDSP 🎵->🎻🔊](https://colab.research.google.com/drive/18kbkyTTgrgXYPaOh1tiICn3_yJGMsUNJ?usp=sharing)
+* [Try out MIDI Synthesis using MIDI-DDSP 🎵->🎻🔊](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/colab/MIDI_DDSP_Demo.ipynb)
 
 ## Train MIDI-DDSP
 
@@ -46,7 +46,9 @@ With environment installed, please download the tfrecord files for the URMP data
 your cloned repository using the following commands:
 
 ```
-gsutil cp gs://magentadata/datasets/urmp/urmp_20210324/* ./data
+cd midi-ddsp # enter the project directory
+mkdir ./data # create a data folder
+gsutil cp gs://magentadata/datasets/urmp/urmp_20210324/* ./data # download tfrecords to directory
 ```
 
 Please check [here](https://cloud.google.com/storage/docs/gsutil) for how to install and use `gsutil`.
@@ -69,7 +71,7 @@ in `train_midi_ddsp.sh`.
 ## Try to play with MIDI-DDSP yourself!
 
 Please try out MIDI-DDSP
-in [Colab notebooks](https://colab.research.google.com/drive/1QRQe2wxBnEVQHIohrPcyEGeUSjKs3gfj?usp=sharing)!
+in [Colab notebooks](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/colab/MIDI_DDSP_Demo.ipynb)!
 
 In this notebook, you will try to use MIDI-DDSP to synthesis a monophonic MIDI file, adjust note expressions, make pitch
 bend by adjusting synthesis parameters, and synthesize quartet from Bach chorales.
