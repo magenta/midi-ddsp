@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 import ddsp
-from midi_ddsp.loss_helper import LossHelper
+from midi_ddsp.modules.loss_helper import LossHelper
 from ddsp.losses import ParamLoss
 
 tfk = tf.keras

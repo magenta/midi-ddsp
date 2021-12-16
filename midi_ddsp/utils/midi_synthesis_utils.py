@@ -5,9 +5,9 @@ import pretty_midi
 import numpy as np
 import tensorflow as tf
 import os
-from data_handling.instrument_name_utils import INST_ABB_TO_ID_DICT
-from utils.audio_io import save_wav
-from utils.inference_utils import ensure_same_length, \
+from midi_ddsp.data_handling.instrument_name_utils import INST_ABB_TO_ID_DICT
+from midi_ddsp.utils.audio_io import save_wav
+from midi_ddsp.utils.inference_utils import ensure_same_length, \
   expression_generator_output_to_conditioning_df, \
   conditioning_df_to_dict, conditioning_df_to_audio, \
   conditioning_df_to_midi_features, CONDITIONING_KEYS

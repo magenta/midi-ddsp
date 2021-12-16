@@ -2,8 +2,8 @@
 from abc import ABC
 import tensorflow as tf
 from ddsp.training import nn
-from data_handling.instrument_name_utils import NUM_INST
-from midi_ddsp.cond_rnn import TwoLayerCondAutoregRNN
+from midi_ddsp.data_handling.instrument_name_utils import NUM_INST
+from midi_ddsp.modules.cond_rnn import TwoLayerCondAutoregRNN
 
 tfk = tf.keras
 tfkl = tfk.layers
@@ -24,6 +24,7 @@ class LangModelOutputLayer(tfkl.Layer):
 class ExpressionGenerator(TwoLayerCondAutoregRNN, tf.keras.Model, ABC):
   """Expression Generator that takes note sequence as input and predicts
   note expression controls."""
+
   # TODO：(yusongwu) merge teacher_force and autoregressive function,
   # things need to change:
   # def sample_out(self, out, cond, time, training=False):
@@ -112,3 +113,18 @@ class ExpressionGenerator(TwoLayerCondAutoregRNN, tf.keras.Model, ABC):
     else:
       outputs = self.autoregressive(cond, training=training)
     return outputs
+
+
+def get_fake_data_expression_generator(target_dim):
+  instrument_id = tf.ones([1], dtype=tf.int64)
+  cond = {
+    'note_pitch': tf.ones([1, 32], dtype=tf.int64),
+    'note_length': tf.ones([1, 32, 1], dtype=tf.float32),
+    'instrument_id': instrument_id
+  }
+  target = tf.ones([1, 32, target_dim], dtype=tf.float32)
+  fake_data = {
+    'cond': cond,
+    'target': target
+  }
+  return fake_data

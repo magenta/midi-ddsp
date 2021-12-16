@@ -1,6 +1,6 @@
 """Loss helper for handling and logging GAN loss."""
 import tensorflow as tf
-from midi_ddsp.loss_helper import LossHelper
+from midi_ddsp.modules.loss_helper import LossHelper
 import ddsp
 from ddsp.spectral_ops import F0_RANGE
 

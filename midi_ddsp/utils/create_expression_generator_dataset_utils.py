@@ -9,10 +9,10 @@ from tqdm.autonotebook import tqdm
 import os
 import matplotlib.pyplot as plt
 from ddsp.training.data import UrmpMidiUnsegmented
-from utils.file_utils import pickle_dump
-from utils.inference_utils import to_length, make_same_length, get_process_group
-from utils.audio_io import save_wav
-from midi_ddsp.interpretable_conditioning import \
+from midi_ddsp.utils.file_utils import pickle_dump
+from midi_ddsp.utils.inference_utils import to_length, make_same_length, get_process_group
+from midi_ddsp.utils.audio_io import save_wav
+from midi_ddsp.modules.interpretable_conditioning import \
   get_interpretable_conditioning, get_amplitudes_max_pos, get_vibrato_feature, \
   extract_harm_controls
 

@@ -10,7 +10,7 @@ import librosa
 from ast import literal_eval
 import matplotlib.pyplot as plt
 
-from utils.audio_io import save_wav
+from midi_ddsp.utils.audio_io import save_wav
 
 
 def plot_spec(wav, sr, title='', vmin=-8, vmax=1, save_path=None):
@@ -28,10 +28,13 @@ def get_hp(file):
   with open(file, 'r') as f:
     log_all = f.readlines()
     f.close()
-  for line in log_all: # (yusongwu) hack here
+  hp = None
+  for line in log_all:  # (yusongwu) hack here
     if '{\'add_synth_loss\':' in line:
       hp = literal_eval(line.strip()[32:])
       break
+  if hp is None:
+    raise RuntimeError('Failed to load the model.')
   return hp
 
 

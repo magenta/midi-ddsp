@@ -21,8 +21,7 @@ lambda_recon=1.0
 reverb_length=48000
 name=logs_expression_generator
 
-python train_synthesis_generator.py \
-  --batch_size $batch_size \
+python train_synthesis_generator.py --batch_size $batch_size \
   --training_steps $training_steps \
   --data_dir $data_dir --name $name \
   --eval_interval $eval_interval \

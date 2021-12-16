@@ -2,15 +2,15 @@
 import ddsp.training
 from ddsp.training import nn
 import tensorflow as tf
-from data_handling.instrument_name_utils import NUM_INST
-from midi_ddsp.model import SynthCoder, MIDIExpressionAE
-from midi_ddsp.ddsp_inference import MelF0LDEncoder, F0LDEncoder, \
+from midi_ddsp.data_handling.instrument_name_utils import NUM_INST
+from midi_ddsp.modules.model import SynthCoder, MIDIExpressionAE
+from midi_ddsp.modules.ddsp_inference import MelF0LDEncoder, F0LDEncoder, \
   FCHarmonicDecoder, FCStackHarmonicDecoder, Cnn8
-from midi_ddsp.reverb_modules import ReverbModules
-from midi_ddsp.synth_params_decoder import MidiToSynthAutoregDecoder, \
+from midi_ddsp.modules.reverb_modules import ReverbModules
+from midi_ddsp.modules.synth_params_decoder import MidiToSynthAutoregDecoder, \
   MidiToF0LDAutoregDecoder, F0LDAutoregDecoder, \
   MidiNoiseToHarmonicDecoder
-from midi_ddsp.midi_decoder import ExpressionMidiDecoder, \
+from midi_ddsp.modules.midi_decoder import ExpressionMidiDecoder, \
   MidiDecoder
 
 
@@ -85,7 +85,7 @@ def get_midi_decoder(hp):
   return midi_decoder
 
 
-def get_model(hp):
+def get_synthesis_generator(hp):
   if hp.midi_decoder_decoder_net == 'rnn_f0_ld' or \
         hp.midi_decoder_type == 'midi_decoder' or \
         hp.midi_decoder_type == 'unconditioned':
@@ -123,8 +123,8 @@ def get_model(hp):
   return model
 
 
-def get_fake_data(hp):
-  """Get the fake data for building the model."""
+def get_fake_data_synthesis_generator(hp):
+  """Get the fake data for building the synthesis generator."""
   fake_data = {
     'audio': tf.random.normal([1, hp.sequence_length * hp.frame_size]),
     'mel': tf.random.normal([1, hp.sequence_length, hp.num_mels]),
