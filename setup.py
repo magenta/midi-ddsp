@@ -24,6 +24,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'midi_ddsp_synthesize = midi_ddsp.midi_ddsp_synthesize:main',
+            'midi_ddsp_download_model_weights = midi_ddsp.download_model_weights:main'
         ],
     },
     classifiers=[
