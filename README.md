@@ -5,8 +5,8 @@
 # MIDI-DDSP: Detailed Control of Musical Performance via Hierarchical Modeling
 
 [Demos](https://midi-ddsp.github.io/) | Blog Post
-| [Colab Notebook](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/colab/MIDI_DDSP_Demo.ipynb) |
-Paper
+| [Colab Notebook](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb)
+| Paper
 
 MIDI-DDSP is a hierarchical audio generation model for synthesizing MIDI expanded
 from [DDSP](https://github.com/magenta/ddsp).
@@ -16,34 +16,28 @@ from [DDSP](https://github.com/magenta/ddsp).
 * [Check out the blog post 💻]()
 * [Read the original paper 📄]()
 * [Listen to some examples 🔈](https://midi-ddsp.github.io/)
-* [Try out MIDI Synthesis using MIDI-DDSP 🎵->🎻🔊](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/colab/MIDI_DDSP_Demo.ipynb)
+* [Try out MIDI Synthesis using MIDI-DDSP 🎵->🎻🔊](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb)
+
+## Install MIDI-DDSP
+
+You could install MIDI-DDSP via pip, which allows you to use the
+cool [Command-line MIDI synthesis](#command-line-midi-synthesis) to synthesize your MIDI.
+
+To install MIDI-DDSP via pip, simply run:
+
+```
+pip install midi-ddsp
+```
 
 ## Train MIDI-DDSP
 
-To train MIDI-DDSP, please first clone the MIDI-DDSP repository:
+To train MIDI-DDSP, please first install midi-ddsp and clone the MIDI-DDSP repository:
 
 ```
 git clone https://github.com/magenta/midi-ddsp.git
 ```
 
-Then, enter this directory and install the libraries needed:
-
-```
-pip install -r requirements.txt
-```
-
-or
-
-```
-pip install ddsp pretty_midi music21 pandas
-```
-
-Please update to the latest version of DDSP (`pip install --upgrade ddsp`) if there is an existing version. If you
-failed to install ddsp, please check [here](https://github.com/magenta/ddsp/blob/main/README.md#installation)
-for more information. Also, please remember to [install CUDA and cuDNN](https://www.tensorflow.org/install/gpu) if you
-are using GPU.
-
-With environment installed, please download the tfrecord files for the URMP dataset in
+For dataset, please download the tfrecord files for the URMP dataset in
 [here](https://console.cloud.google.com/storage/browser/magentadata/datasets/urmp/urmp_20210324) to the `data` folder in
 your cloned repository using the following commands:
 
@@ -73,7 +67,7 @@ in `train_midi_ddsp.sh`.
 ## Try to play with MIDI-DDSP yourself!
 
 Please try out MIDI-DDSP
-in [Colab notebooks](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/colab/MIDI_DDSP_Demo.ipynb)!
+in [Colab notebooks](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb)!
 
 In this notebook, you will try to use MIDI-DDSP to synthesis a monophonic MIDI file, adjust note expressions, make pitch
 bend by adjusting synthesis parameters, and synthesize quartet from Bach chorales.
@@ -106,5 +100,6 @@ FluidSynth for instruments not supported, etc.), please see `synthesize_midi.py 
 If you have a trouble downloading the model weights, please manually download
 from [here](https://github.com/magenta/midi-ddsp/raw/models/midi_ddsp_model_weights_urmp_9_10.zip), and specify
 the `synthesis_generator_weight_path` and `expression_generator_weight_path` by yourself when using the command line.
+You can also specify your other model weights if you want to use your own trained model
 
 [comment]: <> (## TODO: 0. Add script, dealing with model weight download, 1. Change the training loop, 2. Support multi-gpu training)
