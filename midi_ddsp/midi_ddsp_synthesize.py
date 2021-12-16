@@ -1,14 +1,18 @@
 """Synthesize any MIDI file using MIDI-DDSP through command line."""
+# Ignore a bunch of warnings
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 import tensorflow as tf
 import numpy as np
 import pretty_midi
-import os
 import argparse
 import glob
 from tqdm.autonotebook import tqdm
 
 from midi_ddsp.data_handling.instrument_name_utils import \
-  INST_NAME_TO_MIDI_PROGRAM_DICT, MIDI_PROGRAM_TO_INST_ID_DICT
+  INST_NAME_TO_MIDI_PROGRAM_DICT, MIDI_PROGRAM_TO_INST_ID_DICT, \
+  MIDI_PROGRAM_TO_INST_NAME_DICT
 from midi_ddsp.utils.midi_synthesis_utils import note_list_to_sequence, \
   expression_generator_output_to_conditioning_df, batch_conditioning_df_to_audio
 from midi_ddsp.utils.audio_io import save_wav
@@ -85,9 +89,10 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
       conditioning_df_all.append(conditioning_df)
       part_synth_by_model.append(part_number)
     elif use_fluidsynth:
+      instrument_name = MIDI_PROGRAM_TO_INST_NAME_DICT[midi_program]
       print(
-        f'Instrument {part_number} for {midi_file} has a midi program '
-        f'of {midi_program} which cannot be synthesized by model. '
+        f'Part {part_number} in {midi_file} has {instrument_name} as '
+        f'instrument which cannot be synthesized by model. '
         f'Using fluidsynth instead.')
 
       fluidsynth_wav_r3 = instrument.fluidsynth(sample_rate, sf2_path=sf2_path)
@@ -113,19 +118,20 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
   # Sorting out and save the wav.
   for part_number, instrument in enumerate(midi_data.instruments):
     midi_program = instrument.program
+    instrument_name = MIDI_PROGRAM_TO_INST_NAME_DICT[midi_program]
     if midi_program in allowed_midi_program:
       audio = midi_audio_all[part_number]
       save_wav(audio,
                os.path.join(
                  output_dir,
-                 f'{part_number}_{midi_program}.wav'),
+                 f'{part_number}_{instrument_name}.wav'),
                16000)
     elif use_fluidsynth:
       audio = midi_audio_all[part_number]
       save_wav(audio,
                os.path.join(
                  output_dir,
-                 f'{part_number}_{midi_program}_fluidsynth.wav'),
+                 f'{part_number}_{instrument_name}_fluidsynth.wav'),
                16000)
 
   # If there is audio synthesized, mix the audio and return the output.
@@ -162,47 +168,74 @@ def main():
   parser.add_argument('--speed_rate', type=float, default=1.0,
                       help='The speed to synthesize the MIDI file(s).')
   parser.add_argument('--sf2_path', type=str,
-                      default=None,  # '/usr/share/sounds/sf2/FluidR3_GM.sf2'
+                      default=None,
                       help='The path to a sf2 soundfont file.')
-  parser.add_argument('--output_dir', type=str, default=None, required=True,
+  parser.add_argument('--output_dir', type=str, default=None,
                       help='The directory for output audio.')
   parser.add_argument('--use_fluidsynth', action='store_true',
                       help='Use FluidSynth to synthesize the midi instruments '
                            'that are not contained in MIDI-DDSP.')
   parser.add_argument('--synthesis_generator_weight_path', type=str,
-                      default=None, required=True,
+                      default=None,
                       help='The path to the Synthesis Generator weights. '
                            'It is not a specific file path but an index path. '
                            'See https://www.tensorflow.org/guide/checkpoint#'
                            'restore_and_continue_training.')
   parser.add_argument('--expression_generator_weight_path', type=str,
-                      default=None, required=True,
+                      default=None,
                       help='The path to the expression generator weights. '
                            'It is not a specific file path but an index path. '
                            'See https://www.tensorflow.org/guide/checkpoint#'
                            'restore_and_continue_training.')
   args = parser.parse_args()
 
+  package_dir = os.path.dirname(os.path.realpath(__file__))
+
+  if not os.path.exists(os.path.join(package_dir,
+                                     'midi_ddsp_model_weights_urmp_9_10')):
+    raise FileNotFoundError('Model weights not found. '
+                            'Please run \'midi_ddsp_download_model_weights\' '
+                            'to download model weights, '
+                            'or specify path to model weights.')
+
   synthesis_generator_path = args.synthesis_generator_weight_path
+  expression_generator_path = args.expression_generator_weight_path
+  if synthesis_generator_path is None:
+    synthesis_generator_path = os.path.join(
+      package_dir,
+      'midi_ddsp_model_weights_urmp_9_10',
+      'synthesis_generator',
+      '50000')
+  if expression_generator_path is None:
+    expression_generator_path = os.path.join(
+      package_dir,
+      'midi_ddsp_model_weights_urmp_9_10',
+      'expression_generator',
+      '5000')
+
   hp_dict = get_hp(
     os.path.join(os.path.dirname(synthesis_generator_path), 'train.log'))
   for k, v in hp_dict.items():
     setattr(hp, k, v)
   synthesis_generator = get_synthesis_generator(hp)
   synthesis_generator._build(get_fake_data_synthesis_generator(hp))
-  synthesis_generator.load_weights(synthesis_generator_path)
+  synthesis_generator.load_weights(synthesis_generator_path).expect_partial()
 
   n_out = 6
   expression_generator = ExpressionGenerator(n_out=n_out, nhid=128)
   fake_data = get_fake_data_expression_generator(n_out)
   _ = expression_generator(fake_data['cond'], out=fake_data['target'],
                            training=True)
-  expression_generator_path = args.expression_generator_weight_path
-  expression_generator.load_weights(expression_generator_path)
+  expression_generator.load_weights(expression_generator_path).expect_partial()
+
+  if args.output_dir is None:
+    print('Output directory not specified. Output to current directory.')
+    output_dir = './'
+  else:
+    output_dir = args.output_dir
 
   if args.midi_dir and args.midi_path:
-    raise RuntimeWarning(
-      'Both midi_dir and midi_path are provided. Will use midi_dir.')
+    print('Both midi_dir and midi_path are provided. Will use midi_dir.')
   elif not args.midi_dir and not args.midi_path:
     raise ValueError('None of midi_dir or midi_path is provided. '
                      'Please provide at least one of midi_dir or midi_path.')
@@ -210,14 +243,14 @@ def main():
     midi_file_list = glob.glob(args.midi_dir + '/*.mid')
     if len(midi_file_list) == 0:
       raise FileNotFoundError('No midi files found in the directory.')
-    for midi_file in tqdm(midi_file_list):
+    for midi_file in tqdm(midi_file_list, desc='Generating files: '):
       synthesize_midi(
         synthesis_generator,
         expression_generator,
         midi_file,
         pitch_offset=args.pitch_offset,
         speed_rate=args.speed_rate,
-        output_dir=args.output_dir,
+        output_dir=output_dir,
         sf2_path=args.sf2_path,
         use_fluidsynth=args.use_fluidsynth,
         display_progressbar=False
@@ -229,7 +262,7 @@ def main():
       args.midi_path,
       pitch_offset=args.pitch_offset,
       speed_rate=args.speed_rate,
-      output_dir=args.output_dir,
+      output_dir=output_dir,
       sf2_path=args.sf2_path,
       use_fluidsynth=args.use_fluidsynth,
       display_progressbar=True
