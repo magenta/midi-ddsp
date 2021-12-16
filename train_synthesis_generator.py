@@ -6,14 +6,16 @@ import sys
 import logging
 import argparse
 
-from data_handling.get_dataset import get_dataset
-from utils.training_utils import print_hparams, set_seed, save_results, str2bool
-from utils.summary_utils import write_tensorboard_audio
-from hparams_synthesis_generator import hparams as hp
-from midi_ddsp.recon_loss import ReconLossHelper
-from midi_ddsp.gan_loss import GANLossHelper
-from midi_ddsp.get_model import get_model, get_fake_data
-from midi_ddsp.discriminator import Discriminator
+from midi_ddsp.data_handling.get_dataset import get_dataset
+from midi_ddsp.utils.training_utils import print_hparams, set_seed, \
+  save_results, str2bool
+from midi_ddsp.utils.summary_utils import write_tensorboard_audio
+from midi_ddsp.hparams_synthesis_generator import hparams as hp
+from midi_ddsp.modules.recon_loss import ReconLossHelper
+from midi_ddsp.modules.gan_loss import GANLossHelper
+from midi_ddsp.modules.get_synthesis_generator import get_synthesis_generator, \
+  get_fake_data_synthesis_generator
+from midi_ddsp.modules.discriminator import Discriminator
 
 parser = argparse.ArgumentParser(description='Train Synthesis Generator.')
 
@@ -146,7 +148,6 @@ def evaluate(evaluation_data, step):
 
 
 if __name__ == '__main__':
-  # TODO: (yusongwu) finish the help documentation.
   parser.add_argument('--batch_size', type=int, default=hp.batch_size,
                       help='Batch size to use for training.')
   parser.add_argument('--nhid', type=int, default=hp.nhid,
@@ -235,8 +236,8 @@ if __name__ == '__main__':
     setattr(hp, k, v)
 
   # Create Synthesis Generator
-  model = get_model(hp)
-  model._build(get_fake_data(hp))
+  model = get_synthesis_generator(hp)
+  model._build(get_fake_data_synthesis_generator(hp))
 
   # Create optimizer, loss helper and discriminator.
   scheduler = tf.keras.optimizers.schedules.ExponentialDecay(

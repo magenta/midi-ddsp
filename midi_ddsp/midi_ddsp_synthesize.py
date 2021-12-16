@@ -7,17 +7,18 @@ import argparse
 import glob
 from tqdm.autonotebook import tqdm
 
-from data_handling.instrument_name_utils import \
+from midi_ddsp.data_handling.instrument_name_utils import \
   INST_NAME_TO_MIDI_PROGRAM_DICT, MIDI_PROGRAM_TO_INST_ID_DICT
-from utils.midi_synthesis_utils import note_list_to_sequence, \
+from midi_ddsp.utils.midi_synthesis_utils import note_list_to_sequence, \
   expression_generator_output_to_conditioning_df, batch_conditioning_df_to_audio
-from utils.audio_io import save_wav
-from utils.training_utils import get_hp
-from utils.inference_utils import ensure_same_length
-from hparams_synthesis_generator import hparams as hp
-from midi_ddsp.get_model import get_model, get_fake_data
-from midi_ddsp.expression_generator import ExpressionGenerator
-import train_expression_generator
+from midi_ddsp.utils.audio_io import save_wav
+from midi_ddsp.utils.training_utils import get_hp
+from midi_ddsp.utils.inference_utils import ensure_same_length
+from midi_ddsp.hparams_synthesis_generator import hparams as hp
+from midi_ddsp.modules.get_synthesis_generator import get_synthesis_generator, \
+  get_fake_data_synthesis_generator
+from midi_ddsp.modules.expression_generator import ExpressionGenerator, \
+  get_fake_data_expression_generator
 
 
 def synthesize_midi(synthesis_generator, expression_generator, midi_file,
@@ -149,7 +150,7 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
   return output
 
 
-if __name__ == '__main__':
+def main():
   parser = argparse.ArgumentParser(
     description='Synthesize MIDI files using MIDI-DDSP.')
   parser.add_argument('--midi_dir', type=str, default=None,
@@ -163,19 +164,19 @@ if __name__ == '__main__':
   parser.add_argument('--sf2_path', type=str,
                       default=None,  # '/usr/share/sounds/sf2/FluidR3_GM.sf2'
                       help='The path to a sf2 soundfont file.')
-  parser.add_argument('--output_dir', type=str, default=None,
+  parser.add_argument('--output_dir', type=str, default=None, required=True,
                       help='The directory for output audio.')
   parser.add_argument('--use_fluidsynth', action='store_true',
                       help='Use FluidSynth to synthesize the midi instruments '
                            'that are not contained in MIDI-DDSP.')
   parser.add_argument('--synthesis_generator_weight_path', type=str,
-                      default=None,
+                      default=None, required=True,
                       help='The path to the Synthesis Generator weights. '
                            'It is not a specific file path but an index path. '
                            'See https://www.tensorflow.org/guide/checkpoint#'
                            'restore_and_continue_training.')
   parser.add_argument('--expression_generator_weight_path', type=str,
-                      default=None,
+                      default=None, required=True,
                       help='The path to the expression generator weights. '
                            'It is not a specific file path but an index path. '
                            'See https://www.tensorflow.org/guide/checkpoint#'
@@ -187,13 +188,13 @@ if __name__ == '__main__':
     os.path.join(os.path.dirname(synthesis_generator_path), 'train.log'))
   for k, v in hp_dict.items():
     setattr(hp, k, v)
-  synthesis_generator = get_model(hp)
-  synthesis_generator._build(get_fake_data(hp))
+  synthesis_generator = get_synthesis_generator(hp)
+  synthesis_generator._build(get_fake_data_synthesis_generator(hp))
   synthesis_generator.load_weights(synthesis_generator_path)
 
   n_out = 6
   expression_generator = ExpressionGenerator(n_out=n_out, nhid=128)
-  fake_data = train_expression_generator.get_fake_data(n_out)
+  fake_data = get_fake_data_expression_generator(n_out)
   _ = expression_generator(fake_data['cond'], out=fake_data['target'],
                            training=True)
   expression_generator_path = args.expression_generator_weight_path
@@ -233,3 +234,7 @@ if __name__ == '__main__':
       use_fluidsynth=args.use_fluidsynth,
       display_progressbar=True
     )
+
+
+if __name__ == '__main__':
+  main()

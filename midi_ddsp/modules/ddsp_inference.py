@@ -2,8 +2,8 @@
 
 import tensorflow as tf
 import ddsp
-from utils.audio_io import tf_log_mel
-from data_handling.instrument_name_utils import NUM_INST
+from midi_ddsp.utils.audio_io import tf_log_mel
+from midi_ddsp.data_handling.instrument_name_utils import NUM_INST
 from ddsp.training import nn
 from ddsp.spectral_ops import F0_RANGE, LD_RANGE
 

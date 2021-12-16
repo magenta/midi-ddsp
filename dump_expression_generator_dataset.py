@@ -1,17 +1,19 @@
 """Dump the dataset for training expression generator."""
 import os
 import argparse
-from utils.training_utils import set_seed, get_hp
-from utils.create_expression_generator_dataset_utils import \
+from midi_ddsp.utils.training_utils import set_seed, get_hp
+from midi_ddsp.utils.create_expression_generator_dataset_utils import \
   dump_expression_generator_dataset
-from hparams_synthesis_generator import hparams as hp
-from midi_ddsp.get_model import get_model, get_fake_data
+from midi_ddsp.hparams_synthesis_generator import hparams as hp
+from midi_ddsp.modules.get_synthesis_generator import get_synthesis_generator, \
+  get_fake_data_synthesis_generator
 
 parser = argparse.ArgumentParser(description='Dump expression generator '
                                              'dataset.')
 set_seed(1234)
 
-if __name__ == '__main__':
+
+def main():
   parser.add_argument('--model_path', type=str,
                       default=None,
                       help='The path to the model checkpoint.')
@@ -28,10 +30,14 @@ if __name__ == '__main__':
   hp_dict = get_hp(os.path.join(os.path.dirname(model_path), 'train.log'))
   for k, v in hp_dict.items():
     setattr(hp, k, v)
-  model = get_model(hp)
-  model._build(get_fake_data(hp))
+  model = get_synthesis_generator(hp)
+  model._build(get_fake_data_synthesis_generator(hp))
   model.load_weights(model_path)
 
   print('Creating dataset for expression generator!')
   dump_expression_generator_dataset(model, data_dir=args.data_dir,
                                     output_dir=args.output_dir)
+
+
+if __name__ == '__main__':
+  main()

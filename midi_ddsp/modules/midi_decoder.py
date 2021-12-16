@@ -6,7 +6,7 @@ import ddsp.training
 import numpy as np
 from .interpretable_conditioning import get_interpretable_conditioning, \
   get_conditioning_dict
-from data_handling.instrument_name_utils import NUM_INST
+from midi_ddsp.data_handling.instrument_name_utils import NUM_INST
 
 tfk = tf.keras
 tfkl = tfk.layers

@@ -3,7 +3,7 @@ import tensorflow as tf
 import ddsp
 import ddsp.training
 
-from utils.inference_utils import get_process_group
+from midi_ddsp.utils.inference_utils import get_process_group
 from .interpretable_conditioning import extract_harm_controls
 
 

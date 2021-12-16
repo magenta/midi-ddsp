@@ -3,7 +3,7 @@ from tqdm.autonotebook import tqdm
 import tensorflow as tf
 import ddsp
 from ddsp.training import nn
-from midi_ddsp.cond_rnn import TwoLayerCondAutoregRNN
+from midi_ddsp.modules.cond_rnn import TwoLayerCondAutoregRNN
 
 tfk = tf.keras
 tfkl = tfk.layers
@@ -471,7 +471,7 @@ class MidiToSynthAutoregDecoder(tfkl.Layer):
 
     z = tf.concat([z_midi_decoder, self.q_pitch_emb(f0_midi / 127)], -1)
     outputs = self.midi_f0_to_harmonic(z, training=training)
-    
+
     outputs['f0_output'] = f0_output
     if training:
       outputs['f0_hz'] = out['f0_hz']

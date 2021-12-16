@@ -8,10 +8,12 @@ import sys
 import copy
 import argparse
 
-from utils.file_utils import pickle_load
-from utils.training_utils import set_seed
-from midi_ddsp.expression_generator_dataset import get_lang_model_dataset
-from midi_ddsp.expression_generator import ExpressionGenerator
+from midi_ddsp.utils.file_utils import pickle_load
+from midi_ddsp.utils.training_utils import set_seed
+from midi_ddsp.modules.expression_generator_dataset \
+  import get_lang_model_dataset
+from midi_ddsp.modules.expression_generator import ExpressionGenerator, \
+  get_fake_data_expression_generator
 
 set_seed(1111)
 os.environ['TF_DETERMINISTIC_OPS'] = '1'
@@ -23,21 +25,6 @@ def mse_loss(target, pred):
     return tf.reduce_mean(tf.keras.losses.MSE(target, pred['raw_output']))
   else:
     return tf.reduce_mean(tf.keras.losses.MSE(target, pred))
-
-
-def get_fake_data(target_dim):
-  instrument_id = tf.ones([1], dtype=tf.int64)
-  cond = {
-    'note_pitch': tf.ones([1, 32], dtype=tf.int64),
-    'note_length': tf.ones([1, 32, 1], dtype=tf.float32),
-    'instrument_id': instrument_id
-  }
-  target = tf.ones([1, 32, target_dim], dtype=tf.float32)
-  fake_data = {
-    'cond': cond,
-    'target': target
-  }
-  return fake_data
 
 
 def data_aug(batch):
@@ -136,7 +123,7 @@ if __name__ == '__main__':
   log_dir = f'logs/{args.name}'
 
   model = ExpressionGenerator(n_out=n_out, nhid=nhid)
-  _data = get_fake_data(n_out)
+  _data = get_fake_data_expression_generator(n_out)
   _ = model(_data['cond'], out=_data['target'], training=True)
 
   scheduler = tf.keras.optimizers.schedules.ExponentialDecay(
