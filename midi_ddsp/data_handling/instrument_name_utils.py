@@ -38,6 +38,7 @@ INST_ID_TO_NAME_DICT = {i: k for i, (k, v) in
 
 NUM_INST = 20
 
+# MIDI program number (1-128): https://en.wikipedia.org/wiki/General_MIDI
 INST_NAME_TO_MIDI_PROGRAM_DICT = {
   'violin': 41,
   'viola': 42,
@@ -54,6 +55,10 @@ INST_NAME_TO_MIDI_PROGRAM_DICT = {
   'tuba': 59,
   'guitar': 27
 }
+
+# To make the MIDI program number 0 indexed (0-127):
+INST_NAME_TO_MIDI_PROGRAM_DICT = {k: v - 1 for k, v in
+                                  INST_NAME_TO_MIDI_PROGRAM_DICT.items()}
 
 INST_ABB_TO_MIDI_PROGRAM_DICT = {INST_NAME_TO_ABB_DICT[k]: v for k, v in
                                  INST_NAME_TO_MIDI_PROGRAM_DICT.items()}
