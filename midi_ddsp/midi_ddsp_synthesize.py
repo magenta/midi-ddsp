@@ -199,7 +199,6 @@ def main():
                       help='Skip synthesizing MIDI files if already exist '
                            'output folders.')
   args = parser.parse_args()
-  # skip existing
 
   package_dir = os.path.dirname(os.path.realpath(__file__))
 
