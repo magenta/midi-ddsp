@@ -85,13 +85,13 @@ midi_ddsp_download_model_weights
 To synthesize a midi file simply run the following command:
 
 ```
-python midi_ddsp_synthesize.py --midi_path <path-to-midi>
+midi_ddsp_synthesize --midi_path <path-to-midi>
 ```
 
 For a starter, you can try to synthesize the example midi file in this repository:
 
 ```
-python midi_ddsp_synthesize.py --midi_path ./midi_example/ode_to_joy.mid
+midi_ddsp_synthesize --midi_path ./midi_example/ode_to_joy.mid
 ```
 
 The command line also enables synthesize a folder of midi files. For more advance use (synthesize a folder, using
