@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="PylintConfigService">
-    <option name="customPylintPath" value="D:\Anaconda3\envs\ddsp\Scripts\pylint.exe" />
-    <option name="pylintrcPath" value="E:\DDSP\代码开源\pylintrc" />
-  </component>
-</project>
