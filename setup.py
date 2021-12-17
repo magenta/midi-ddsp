@@ -16,7 +16,10 @@ setuptools.setup(
         'ddsp',
         'pretty_midi',
         'music21',
-        'pandas'
+        'pandas',
+        # (yusongwu) Force overwriting tfds-nightly as tfds-nightly
+        # will raise error under windows.
+        'tensorflow_datasets'
     ],
     extras_require={
         'test': ['pytest', 'pylint!=2.5.0'],
