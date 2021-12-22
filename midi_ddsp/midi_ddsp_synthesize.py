@@ -25,6 +25,9 @@ from midi_ddsp.modules.get_synthesis_generator import get_synthesis_generator, \
 from midi_ddsp.modules.expression_generator import ExpressionGenerator, \
   get_fake_data_expression_generator
 
+FRAME_RATE = 250
+SAMPLE_RATE = 16000
+
 
 def load_pretrained_model(synthesis_generator_path=None,
                           expression_generator_path=None):
@@ -70,8 +73,8 @@ def load_pretrained_model(synthesis_generator_path=None,
 
 def synthesize_midi(synthesis_generator, expression_generator, midi_file,
                     pitch_offset=0, speed_rate=1.0,
-                    output_dir=r'./', fs=250, sample_rate=16000,
-                    use_fluidsynth=True,
+                    output_dir=None,
+                    use_fluidsynth=False,
                     sf2_path='/usr/share/sounds/sf2/FluidR3_GM.sf2',
                     display_progressbar=True,
                     skip_existing_files=False):
@@ -84,8 +87,6 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
       pitch_offset: Pitch in semitone to transpose.
       speed_rate: The speed to synthesize the MIDI file.
       output_dir: The directory for output audio.
-      fs: Frame rate for Synthesis Generator.
-      sample_rate: Sample rate for synthesizing the audio.
       use_fluidsynth: Whether to use FluidSynth for synthesizing instruments
         that are not available in MIDI-DDSP.
       sf2_path: The path to a sf2 soundfont file used for FluidSynth.
@@ -103,12 +104,13 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
           'conditioning_df': note expressions predicted by expression generator
             in the format of DataFrame,
   """
-  # Create output folder under output directory.
+  # Check if there is existing files.
   filename = os.path.splitext(os.path.basename(midi_file))[0]
-  output_dir = os.path.join(output_dir, filename)
-  if os.path.exists(output_dir) and skip_existing_files:
-    print(f'{midi_file} has been synthesized, will skip this file.')
-    return
+  if output_dir is not None:
+    output_dir = os.path.join(output_dir, filename)
+    if os.path.exists(output_dir) and skip_existing_files:
+      print(f'{midi_file} has been synthesized, will skip this file.')
+      return
 
   # Get all the midi program in URMP dataset excluding guitar.
   allowed_midi_program = list(INST_NAME_TO_MIDI_PROGRAM_DICT.values())[:-1]
@@ -123,7 +125,7 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
   for part_number, instrument in enumerate(midi_data.instruments):
     midi_program = instrument.program
     if midi_program in allowed_midi_program:
-      note_sequence = note_list_to_sequence(instrument.notes, fs=fs,
+      note_sequence = note_list_to_sequence(instrument.notes, fs=FRAME_RATE,
                                             pitch_offset=pitch_offset,
                                             speed_rate=speed_rate)
       instrument_id = tf.constant([MIDI_PROGRAM_TO_INST_ID_DICT[midi_program]])
@@ -143,7 +145,7 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
         f'instrument which cannot be synthesized by model. '
         f'Using fluidsynth instead.')
 
-      fluidsynth_wav_r3 = instrument.fluidsynth(sample_rate, sf2_path=sf2_path)
+      fluidsynth_wav_r3 = instrument.fluidsynth(SAMPLE_RATE, sf2_path=sf2_path)
       fluidsynth_wav_r3 *= 0.25  # * 0.25 for lower volume
       midi_audio_all[part_number] = fluidsynth_wav_r3
 
@@ -164,24 +166,25 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
     midi_synth_params = None
 
   # Sorting out and save the wav.
-  os.makedirs(output_dir, exist_ok=True)
-  for part_number, instrument in enumerate(midi_data.instruments):
-    midi_program = instrument.program
-    instrument_name = MIDI_PROGRAM_TO_INST_NAME_DICT[midi_program]
-    if midi_program in allowed_midi_program:
-      audio = midi_audio_all[part_number]
-      save_wav(audio,
-               os.path.join(
-                 output_dir,
-                 f'{part_number}_{instrument_name}.wav'),
-               16000)
-    elif use_fluidsynth:
-      audio = midi_audio_all[part_number]
-      save_wav(audio,
-               os.path.join(
-                 output_dir,
-                 f'{part_number}_{instrument_name}_fluidsynth.wav'),
-               16000)
+  if output_dir is not None:
+    os.makedirs(output_dir, exist_ok=True)
+    for part_number, instrument in enumerate(midi_data.instruments):
+      midi_program = instrument.program
+      instrument_name = MIDI_PROGRAM_TO_INST_NAME_DICT[midi_program]
+      if midi_program in allowed_midi_program:
+        audio = midi_audio_all[part_number]
+        save_wav(audio,
+                 os.path.join(
+                   output_dir,
+                   f'{part_number}_{instrument_name}.wav'),
+                 16000)
+      elif use_fluidsynth:
+        audio = midi_audio_all[part_number]
+        save_wav(audio,
+                 os.path.join(
+                   output_dir,
+                   f'{part_number}_{instrument_name}_fluidsynth.wav'),
+                 16000)
 
   # If there is audio synthesized, mix the audio and return the output.
   if midi_audio_all:
@@ -190,7 +193,8 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
         [a.astype(np.float) for a in midi_audio_all.values()], axis=0),
         axis=-1),
       axis=-1)
-    save_wav(midi_audio_mix, os.path.join(output_dir, 'mix.wav'), 16000)
+    if output_dir is not None:
+      save_wav(midi_audio_mix, os.path.join(output_dir, 'mix.wav'), 16000)
     output = {
       'mix_audio': midi_audio_mix,
       'stem_audio': midi_audio_all,
