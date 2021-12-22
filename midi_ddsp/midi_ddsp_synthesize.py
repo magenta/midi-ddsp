@@ -26,6 +26,48 @@ from midi_ddsp.modules.expression_generator import ExpressionGenerator, \
   get_fake_data_expression_generator
 
 
+def load_pretrained_model(synthesis_generator_path=None,
+                          expression_generator_path=None):
+  """Load pre-trained model weights."""
+  package_dir = os.path.dirname(os.path.realpath(__file__))
+
+  if not os.path.exists(os.path.join(package_dir,
+                                     'midi_ddsp_model_weights_urmp_9_10')):
+    raise FileNotFoundError('Model weights not found. '
+                            'Please run \'midi_ddsp_download_model_weights\' '
+                            'to download model weights, '
+                            'or specify path to model weights.')
+
+  if synthesis_generator_path is None:
+    synthesis_generator_path = os.path.join(
+      package_dir,
+      'midi_ddsp_model_weights_urmp_9_10',
+      'synthesis_generator',
+      '50000')
+  if expression_generator_path is None:
+    expression_generator_path = os.path.join(
+      package_dir,
+      'midi_ddsp_model_weights_urmp_9_10',
+      'expression_generator',
+      '5000')
+
+  hp_dict = get_hp(
+    os.path.join(os.path.dirname(synthesis_generator_path), 'train.log'))
+  for k, v in hp_dict.items():
+    setattr(hp, k, v)
+  synthesis_generator = get_synthesis_generator(hp)
+  synthesis_generator._build(get_fake_data_synthesis_generator(hp))
+  synthesis_generator.load_weights(synthesis_generator_path).expect_partial()
+
+  n_out = 6
+  expression_generator = ExpressionGenerator(n_out=n_out, nhid=128)
+  fake_data = get_fake_data_expression_generator(n_out)
+  _ = expression_generator(fake_data['cond'], out=fake_data['target'],
+                           training=True)
+  expression_generator.load_weights(expression_generator_path).expect_partial()
+  return synthesis_generator, expression_generator
+
+
 def synthesize_midi(synthesis_generator, expression_generator, midi_file,
                     pitch_offset=0, speed_rate=1.0,
                     output_dir=r'./', fs=250, sample_rate=16000,
@@ -67,7 +109,6 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
   if os.path.exists(output_dir) and skip_existing_files:
     print(f'{midi_file} has been synthesized, will skip this file.')
     return
-  os.makedirs(output_dir, exist_ok=True)
 
   # Get all the midi program in URMP dataset excluding guitar.
   allowed_midi_program = list(INST_NAME_TO_MIDI_PROGRAM_DICT.values())[:-1]
@@ -123,6 +164,7 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
     midi_synth_params = None
 
   # Sorting out and save the wav.
+  os.makedirs(output_dir, exist_ok=True)
   for part_number, instrument in enumerate(midi_data.instruments):
     midi_program = instrument.program
     instrument_name = MIDI_PROGRAM_TO_INST_NAME_DICT[midi_program]
@@ -200,44 +242,9 @@ def main():
                            'output folders.')
   args = parser.parse_args()
 
-  package_dir = os.path.dirname(os.path.realpath(__file__))
-
-  if not os.path.exists(os.path.join(package_dir,
-                                     'midi_ddsp_model_weights_urmp_9_10')):
-    raise FileNotFoundError('Model weights not found. '
-                            'Please run \'midi_ddsp_download_model_weights\' '
-                            'to download model weights, '
-                            'or specify path to model weights.')
-
-  synthesis_generator_path = args.synthesis_generator_weight_path
-  expression_generator_path = args.expression_generator_weight_path
-  if synthesis_generator_path is None:
-    synthesis_generator_path = os.path.join(
-      package_dir,
-      'midi_ddsp_model_weights_urmp_9_10',
-      'synthesis_generator',
-      '50000')
-  if expression_generator_path is None:
-    expression_generator_path = os.path.join(
-      package_dir,
-      'midi_ddsp_model_weights_urmp_9_10',
-      'expression_generator',
-      '5000')
-
-  hp_dict = get_hp(
-    os.path.join(os.path.dirname(synthesis_generator_path), 'train.log'))
-  for k, v in hp_dict.items():
-    setattr(hp, k, v)
-  synthesis_generator = get_synthesis_generator(hp)
-  synthesis_generator._build(get_fake_data_synthesis_generator(hp))
-  synthesis_generator.load_weights(synthesis_generator_path).expect_partial()
-
-  n_out = 6
-  expression_generator = ExpressionGenerator(n_out=n_out, nhid=128)
-  fake_data = get_fake_data_expression_generator(n_out)
-  _ = expression_generator(fake_data['cond'], out=fake_data['target'],
-                           training=True)
-  expression_generator.load_weights(expression_generator_path).expect_partial()
+  synthesis_generator, expression_generator = load_pretrained_model(
+    synthesis_generator_path=args.synthesis_generator_weight_path,
+    expression_generator_path=args.expression_generator_weight_path)
 
   if args.output_dir is None:
     print('Output directory not specified. Output to current directory.')

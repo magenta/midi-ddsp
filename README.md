@@ -55,6 +55,9 @@ Finally, you can run the script `train_midi_ddsp.sh` to train the exact same mod
 sh ./train_midi_ddsp.sh
 ```
 
+The current codebase does not support training with arbitrary dataset, but we will hopefully update that in the near
+future.
+
 Side note:
 
 If one download the dataset to a different location, please change the `data_dir` parameter in `train_midi_ddsp.sh`.
@@ -71,6 +74,10 @@ in [Colab notebooks](https://colab.research.google.com/github/magenta/midi-ddsp/
 
 In this notebook, you will try to use MIDI-DDSP to synthesis a monophonic MIDI file, adjust note expressions, make pitch
 bend by adjusting synthesis parameters, and synthesize quartet from Bach chorales.
+
+We have trained MIDI-DDSP on the URMP dataset which support synthesizing 13 instruments: violin, viola, cello, double
+bass, flute, oboe, clarinet, saxophone, bassoon, trumpet, horn, trombone, tuba. You could find how to download and use
+our pre-trained model below:
 
 ## Command-line MIDI synthesis
 
@@ -100,6 +107,76 @@ FluidSynth for instruments not supported, etc.), please see `synthesize_midi.py 
 If you have a trouble downloading the model weights, please manually download
 from [here](https://github.com/magenta/midi-ddsp/raw/models/midi_ddsp_model_weights_urmp_9_10.zip), and specify
 the `synthesis_generator_weight_path` and `expression_generator_weight_path` by yourself when using the command line.
-You can also specify your other model weights if you want to use your own trained model
+You can also specify your other model weights if you want to use your own trained model.
 
-[comment]: <> (## TODO: 0. Add script, dealing with model weight download, 1. Change the training loop, 2. Support multi-gpu training)
+## Example Usage
+
+After installing midi-ddsp, you could import midi-ddsp in python and synthesize MIDI in your code. Here is a usage
+example to synthesize the `midi_example/ode_to_joy.mid` and adjust the synthesis parameters:
+
+```python
+import numpy as np
+import tensorflow as tf
+from midi_ddsp.utils.midi_synthesis_utils import synthesize_mono_midi, conditioning_df_to_audio
+from midi_ddsp.utils.inference_utils import get_process_group
+from midi_ddsp.midi_ddsp_synthesize import load_pretrained_model
+from midi_ddsp.data_handling.instrument_name_utils import INST_NAME_TO_ID_DICT
+
+# -----MIDI Synthesis-----
+midi_file = 'midi_example/ode_to_joy.mid'
+# Load pre-trained model
+synthesis_generator, expression_generator = load_pretrained_model()
+# Synthesize with violin:
+instrument_name = 'violin'
+instrument_id = INST_NAME_TO_ID_DICT[instrument_name]
+# Run model prediction
+midi_audio, midi_control_params, midi_synth_params, conditioning_df = synthesize_mono_midi(synthesis_generator,
+                                                                                           expression_generator,
+                                                                                           midi_file, instrument_id,
+                                                                                           output_dir=None)
+
+synthesized_audio = midi_audio  # The synthesized audio
+
+# -----Adjust note expression controls and re-synthesize-----
+
+# Make all notes weak vibrato:
+conditioning_df_changed = conditioning_df.copy()
+note_vibrato = conditioning_df_changed['vibrato_extend'].value
+conditioning_df_changed['vibrato_extend'] = np.ones_like(conditioning_df['vibrato_extend'].values) * 0.1
+# Re-synthesize
+midi_audio_changed, midi_control_params_changed, midi_synth_params_changed = conditioning_df_to_audio(
+  synthesis_generator, conditioning_df_changed, tf.constant([instrument_id]))
+
+synthesized_audio_changed = midi_audio_changed  # The synthesized audio
+
+# There are 6 note expression controls in conditioning_df that you could change:
+# 'amplitude_mean', 'amplitude_std', 'vibrato_extend', 'brightness', 'attack_level', 'amplitudes_max_pos'.
+# Please refer to https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb#scrollTo=XfPPrdPu5sSy for the effect of each control. 
+
+# -----Adjust synthesis parameters and re-synthesize-----
+
+# The original synthesis parameters:
+f0_ori = midi_synth_params['f0_hz']
+amps_ori = midi_synth_params['amplitudes']
+noise_ori = midi_synth_params['noise_magnitudes']
+hd_ori = midi_synth_params['harmonic_distribution']
+
+# TODO: make your change of the synthesis parameters here:
+f0_changed = f0_ori
+amps_changed = amps_ori
+noise_changed = noise_ori
+hd_changed = hd_ori
+
+# Resynthesis the audio using DDSP
+processor_group = get_process_group(midi_synth_params['amplitudes'].shape[1], use_angular_cumsum=True)
+midi_audio_changed = processor_group({'amplitudes': amps_changed,
+                                      'harmonic_distribution': hd_changed,
+                                      'noise_magnitudes': noise_changed,
+                                      'f0_hz': f0_changed, },
+                                     verbose=False)
+midi_audio_changed = synthesis_generator.reverb_module(midi_audio_changed, reverb_number=instrument_id, training=False)
+
+synthesized_audio_changed = midi_audio_changed  # The synthesized audio
+```
+
+[comment]: <> "## TODO:  0. Add more doc about python code synthesis api 1. Change the training loop, 2. Support multi-gpu training"
