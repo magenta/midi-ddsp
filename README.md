@@ -112,7 +112,7 @@ You can also specify your other model weights if you want to use your own traine
 ## Example Usage
 
 After installing midi-ddsp, you could import midi-ddsp in python and synthesize MIDI in your code. Here is a usage
-example to synthesize the `midi_example/ode_to_joy.mid` and adjust the synthesis parameters:
+example to synthesize the `ode_to_joy.mid` and adjust the synthesis parameters:
 
 ```python
 import numpy as np
@@ -123,7 +123,7 @@ from midi_ddsp.midi_ddsp_synthesize import load_pretrained_model
 from midi_ddsp.data_handling.instrument_name_utils import INST_NAME_TO_ID_DICT
 
 # -----MIDI Synthesis-----
-midi_file = 'midi_example/ode_to_joy.mid'
+midi_file = 'ode_to_joy.mid'
 # Load pre-trained model
 synthesis_generator, expression_generator = load_pretrained_model()
 # Synthesize with violin:
