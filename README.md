@@ -109,10 +109,30 @@ from [here](https://github.com/magenta/midi-ddsp/raw/models/midi_ddsp_model_weig
 the `synthesis_generator_weight_path` and `expression_generator_weight_path` by yourself when using the command line.
 You can also specify your other model weights if you want to use your own trained model.
 
-## Example Usage
+## Python Usage
 
-After installing midi-ddsp, you could import midi-ddsp in python and synthesize MIDI in your code. Here is a usage
-example to synthesize the `ode_to_joy.mid` and adjust the synthesis parameters:
+After installing midi-ddsp, you could import midi-ddsp in python and synthesize MIDI in your code.
+
+### Minimal Example
+
+Here is a simple example to use MIDI-DDSP to synthesize a midi file:
+
+```python
+from midi_ddsp import synthesize_midi, load_pretrained_model
+
+midi_file = 'ode_to_joy.mid'
+# Load pre-trained model
+synthesis_generator, expression_generator = load_pretrained_model()
+# Synthesize MIDI
+output = synthesize_midi(synthesis_generator, expression_generator, midi_file)
+# The synthesized audio
+synthesized_audio = output['mix_audio']
+```
+
+### Advance Usage 
+
+Here is an advance example to synthesize the `ode_to_joy.mid`, change the note expression controls, and adjust the
+synthesis parameters:
 
 ```python
 import numpy as np
