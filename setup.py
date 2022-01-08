@@ -7,7 +7,7 @@ with open('README.md') as f:
 
 setuptools.setup(
   name='midi-ddsp',
-  version='0.1.3',
+  version='0.1.4',
   description='Synthesis of MIDI with DDSP',
   long_description=long_description,
   long_description_content_type='text/markdown',

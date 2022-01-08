@@ -20,7 +20,8 @@ def time_to_frame(time_s, fs=250):
   return int(round(time_s * fs))
 
 
-def note_list_to_sequence(note_list, fs=250, pitch_offset=0, speed_rate=1):
+def note_list_to_sequence(note_list, fs=250, pitch_offset=0, speed_rate=1,
+                          remove_start_silence=False):
   """Convert list of note in pretty_midi to midi sequence for
   expression generator."""
   note_pitch = []
@@ -37,7 +38,12 @@ def note_list_to_sequence(note_list, fs=250, pitch_offset=0, speed_rate=1):
     note_length.append(off_frame - on_frame)
     prev_off_frame = off_frame
 
-  # add a rest to the end
+  # add the silence to the start if the remove_start_silence is False
+  if not remove_start_silence:
+    note_pitch.insert(0, 0)
+    note_length.insert(0, time_to_frame(note_list[0].start / speed_rate, fs))
+
+  # add a rest of 1 second to the end for better synthesis quality
   note_pitch.append(0)
   note_length.append(fs)
 
