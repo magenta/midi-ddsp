@@ -202,4 +202,6 @@ midi_audio_changed = synthesis_generator.reverb_module(midi_audio_changed, rever
 synthesized_audio_changed = midi_audio_changed  # The synthesized audio
 ```
 
+**This is not an officially supported Google product.**
+
 [comment]: <> "## TODO:  0. Add more doc about python code synthesis api 1. Change the training loop, 2. Support multi-gpu training"
