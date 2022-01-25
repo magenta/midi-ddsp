@@ -202,6 +202,10 @@ midi_audio_changed = synthesis_generator.reverb_module(midi_audio_changed, rever
 synthesized_audio_changed = midi_audio_changed  # The synthesized audio
 ```
 
+## Acknowledgment
+
 **This is not an officially supported Google product.**
+
+We would like to thank @akhaliq for creating the [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/akhaliq/midi-ddsp).
 
 [comment]: <> "## TODO:  0. Add more doc about python code synthesis api 1. Change the training loop, 2. Support multi-gpu training"
