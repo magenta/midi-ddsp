@@ -14,7 +14,7 @@ from [DDSP](https://github.com/magenta/ddsp).
 
 ## Links
 
-* [Check out the blog post 💻]()
+* [Check out the blog post 💻](https://magenta.tensorflow.org/midi-ddsp)
 * [Read the original paper 📄](https://arxiv.org/abs/2112.09312)
 * [Listen to some examples 🔈](https://midi-ddsp.github.io/)
 * [Try out MIDI Synthesis using MIDI-DDSP 🎵->🎻🔊](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb)
