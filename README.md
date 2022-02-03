@@ -4,7 +4,7 @@
 
 # MIDI-DDSP: Detailed Control of Musical Performance via Hierarchical Modeling
 
-[Demos](https://midi-ddsp.github.io/) | Blog Post
+[Demos](https://midi-ddsp.github.io/) | [Blog Post](https://magenta.tensorflow.org/midi-ddsp) 
 | [Colab Notebook](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb)
 | [Paper](https://arxiv.org/abs/2112.09312) |  [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/akhaliq/midi-ddsp)
 
