@@ -19,7 +19,7 @@ import ddsp
 from midi_ddsp.utils.audio_io import tf_log_mel
 from midi_ddsp.data_handling.instrument_name_utils import NUM_INST
 from ddsp.training import nn
-from ddsp.spectral_ops import F0_RANGE, LD_RANGE
+from ddsp.spectral_ops import F0_RANGE, DB_RANGE
 
 tfk = tf.keras
 tfkl = tfk.layers
@@ -69,7 +69,7 @@ class MelF0LDEncoder(tfkl.Layer):
       self.instrument_emb(inputs['instrument_id'])[:, tf.newaxis, :],
       [1, z_cnn.shape[1], 1])
     x = tf.concat([ddsp.core.hz_to_midi(inputs['f0_hz']) / F0_RANGE,
-                   inputs['loudness_db'] / LD_RANGE], -1)
+                   inputs['loudness_db'] / DB_RANGE], -1)
     x_z = self.f0_ld_fc(x)
     z_out = self.rnn(tf.concat([x_z, z_reduce, instrument_z], -1))
     return z_out
@@ -127,7 +127,7 @@ class F0LDEncoder(tfkl.Layer):
 
   def call(self, inputs, training=False):
     z_f0 = self.f0_fc(ddsp.core.hz_to_midi(inputs['f0_hz']) / F0_RANGE)
-    z_ld = self.ld_fc(inputs['loudness_db'] / LD_RANGE)
+    z_ld = self.ld_fc(inputs['loudness_db'] / DB_RANGE)
     instrument_z = tf.tile(
       self.instrument_emb(inputs['instrument_id'])[:, tf.newaxis, :],
       [1, z_ld.shape[1], 1])

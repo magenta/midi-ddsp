@@ -28,8 +28,8 @@ def extract_harm_controls(synth_params, log_scale=True, stop_gradient=False):
   noise = synth_params['filtered_noise']['controls']['magnitudes']
 
   if log_scale:
-    amps = ddsp.spectral_ops.amplitude_to_db(amps, use_tf=True)
-    noise = ddsp.spectral_ops.amplitude_to_db(noise, use_tf=True)
+    amps = ddsp.core.amplitude_to_db(amps, use_tf=True)
+    noise = ddsp.core.amplitude_to_db(noise, use_tf=True)
 
   if stop_gradient:
     amps = tf.stop_gradient(amps)
@@ -229,7 +229,7 @@ def adsr_get_note_mask(q_pitch, max_regions=200, note_on_only=True):
     q_pitch = q_pitch[:, :, 0]
 
   # Get onset and offset points.
-  edges = tf.abs(ddsp.spectral_ops.diff(q_pitch, axis=1)) > 0
+  edges = tf.abs(ddsp.core.diff(q_pitch, axis=1)) > 0
 
   # Count endpoints as starts/ends of regions.
   edges = edges[:, :-1, ...]
