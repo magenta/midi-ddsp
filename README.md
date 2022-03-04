@@ -105,7 +105,7 @@ midi_ddsp_synthesize --midi_path ./midi_example/ode_to_joy.mid
 ```
 
 The command line also enables synthesize a folder of midi files. For more advance use (synthesize a folder, using
-FluidSynth for instruments not supported, etc.), please see `synthesize_midi.py --help`.
+FluidSynth for instruments not supported, etc.), please see `midi_ddsp_synthesize --help`.
 
 If you have a trouble downloading the model weights, please manually download
 from [here](https://github.com/magenta/midi-ddsp/raw/models/midi_ddsp_model_weights_urmp_9_10.zip), and specify
