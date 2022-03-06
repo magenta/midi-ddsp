@@ -319,7 +319,8 @@ def main():
         sf2_path=args.sf2_path,
         use_fluidsynth=args.use_fluidsynth,
         display_progressbar=False,
-        skip_existing_files=args.skip_existing_files
+        skip_existing_files=args.skip_existing_files,
+        save_synth_params=args.save_synth_params
       )
   elif args.midi_path:
     synthesize_midi(
