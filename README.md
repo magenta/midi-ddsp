@@ -6,7 +6,7 @@
 
 [Demos](https://midi-ddsp.github.io/) | [Blog Post](https://magenta.tensorflow.org/midi-ddsp) 
 | [Colab Notebook](https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb)
-| [Paper](https://arxiv.org/abs/2112.09312) |  [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/akhaliq/midi-ddsp)
+| [Paper](https://arxiv.org/abs/2112.09312) |  [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/lukewys/midi-ddsp)
 
 
 MIDI-DDSP is a hierarchical audio generation model for synthesizing MIDI expanded
@@ -26,7 +26,7 @@ from [DDSP](https://github.com/magenta/ddsp).
 You could install MIDI-DDSP via pip, which allows you to use the
 cool [Command-line MIDI synthesis](#command-line-midi-synthesis) to synthesize your MIDI.
 
-To install MIDI-DDSP via pip, simply run:
+To install MIDI-DDSP via pip, simply run following command in a **python3.8** environment:
 
 ```
 pip install midi-ddsp
@@ -206,6 +206,6 @@ synthesized_audio_changed = midi_audio_changed  # The synthesized audio
 
 **This is not an officially supported Google product.**
 
-We would like to thank @akhaliq for creating the [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/akhaliq/midi-ddsp).
+We would like to thank @akhaliq for creating the [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/akhaliq/midi-ddsp) (no longer functional).
 
 [comment]: <> "## TODO:  0. Add more doc about python code synthesis api 1. Change the training loop, 2. Support multi-gpu training"

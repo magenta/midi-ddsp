@@ -58,7 +58,7 @@ def pickle_load(path):
 
 def json_dump(data_json, json_save_path):
   with open(json_save_path, 'w') as f:
-    f.write(data_json)
+    json.dump(data_json, f)
     f.close()
 
 
