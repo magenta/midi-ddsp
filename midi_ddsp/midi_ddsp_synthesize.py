@@ -190,7 +190,7 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
       midi_audio_all[part_number] = midi_audio[i].numpy()
 
       # align instrument_id with part number
-      instrument_id_all_for_save[part_number] = instrument_id_all[i].numpy()
+      instrument_id_all_for_save[part_number] = instrument_id_all[i].numpy()[0]
 
       # align note expression controls with part number
       conditioning_df_all_for_save[part_number] = conditioning_df_all[i]
