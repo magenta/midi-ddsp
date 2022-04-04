@@ -180,6 +180,7 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
         instrument_id_all,
         display_progressbar=display_progressbar)
 
+    # discard rest of the values in midi_synth_params other than inputs
     midi_synth_params = midi_synth_params['inputs']
     conditioning_df_all_for_save = {}
     instrument_id_all_for_save = {}
@@ -211,42 +212,15 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
       }
 
   # Sorting out and save the wav.
-  if output_dir is not None:
-    os.makedirs(output_dir, exist_ok=True)
-    for part_number, instrument in enumerate(midi_data.instruments):
-      midi_program = instrument.program
-      instrument_name = MIDI_PROGRAM_TO_INST_NAME_DICT[midi_program]
-      if midi_program in allowed_midi_program:
-        audio = midi_audio_all[part_number]
-        save_wav(audio,
-                 os.path.join(
-                   output_dir,
-                   f'{part_number}_{instrument_name}.wav'),
-                 SAMPLE_RATE)
-      elif use_fluidsynth:
-        audio = midi_audio_all[part_number]
-        save_wav(audio,
-                 os.path.join(
-                   output_dir,
-                   f'{part_number}_{instrument_name}_fluidsynth.wav'),
-                 SAMPLE_RATE)
-
-  # If there is audio synthesized, mix the audio and return the output.
   if midi_audio_all:
+
+    # If there is audio synthesized, mix the audio and return the output.
     midi_audio_mix = np.sum(
       np.stack(ensure_same_length(
         [a.astype(np.float64) for a in midi_audio_all.values()], axis=0),
         axis=-1),
       axis=-1)
-    if output_dir is not None:
-      save_wav(midi_audio_mix, os.path.join(output_dir, 'mix.wav'), SAMPLE_RATE)
-      if save_metadata:
-        metadata = {
-            'instrument_id': instrument_id_all_for_save,
-            'note_expression_control': conditioning_df_all_for_save,
-            'synthesis_parameters': midi_synth_params_all,
-        }
-        pickle_dump(metadata, os.path.join(output_dir, 'metadata.pickle'))
+
     output = {
       'mix_audio': midi_audio_mix,
       'stem_audio': midi_audio_all,
@@ -255,6 +229,36 @@ def synthesize_midi(synthesis_generator, expression_generator, midi_file,
       'midi_synth_params': midi_synth_params_all,
       'conditioning_df': conditioning_df_all,
     }
+
+    # if provided with output_dir, save all the files needed
+    if output_dir is not None:
+      os.makedirs(output_dir, exist_ok=True)
+      for part_number, instrument in enumerate(midi_data.instruments):
+        midi_program = instrument.program
+        instrument_name = MIDI_PROGRAM_TO_INST_NAME_DICT[midi_program]
+        if midi_program in allowed_midi_program:
+          audio = midi_audio_all[part_number]
+          save_wav(audio,
+                   os.path.join(
+                     output_dir,
+                     f'{part_number}_{instrument_name}.wav'),
+                   SAMPLE_RATE)
+        elif use_fluidsynth:
+          audio = midi_audio_all[part_number]
+          save_wav(audio,
+                   os.path.join(
+                     output_dir,
+                     f'{part_number}_{instrument_name}_fluidsynth.wav'),
+                   SAMPLE_RATE)
+
+      save_wav(midi_audio_mix, os.path.join(output_dir, 'mix.wav'), SAMPLE_RATE)
+      if save_metadata:
+        metadata = {
+            'instrument_id': instrument_id_all_for_save,
+            'note_expression_control': conditioning_df_all_for_save,
+            'synthesis_parameters': midi_synth_params_all,
+        }
+        pickle_dump(metadata, os.path.join(output_dir, 'metadata.pickle'))
   else:
     output = None
 
