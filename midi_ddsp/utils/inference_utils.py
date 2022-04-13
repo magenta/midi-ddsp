@@ -82,19 +82,25 @@ def conditioning_df_to_midi_features(conditioning_df, length=None):
 
 def expression_generator_output_to_conditioning_df(expression_generator_outputs,
                                                    expression_generator_cond,
-                                                   frame_size=0.004):
+                                                   frame_size=0.004,
+                                                   clip_value=True):
   """
   Convert expression generator outputs to conditioning_df.
   Args:
       expression_generator_outputs: The output of the expression generator.
       expression_generator_cond: (in dataset data['cond'])
       frame_size: the frame size, in second.
+      clip_value: clip the expression generator output between [0, 1].
 
   Returns:
 
   """
   expression_generator_outputs = scale_expression_generator_output(
     expression_generator_outputs[0])
+  if clip_value: # clip the expression generator output between [0, 1].
+    expression_generator_outputs = tf.clip_by_value(
+    expression_generator_outputs, clip_value_min=0.0, clip_value_max=1.0
+    )
   conditioning_dict_keys = CONDITIONING_KEYS
   data_all = []
   onset = 0
@@ -129,7 +135,10 @@ def conditioning_df_to_expression_generator_output(conditioning_df,
 
 
 def scale_expression_generator_output(output):
-  """Scale expression generator output."""
+  """Scale expression generator output.
+  This function now is useless. But it is a plcaeholder
+  if you want to post-process your note expression output.
+  """
   scale = np.ones((1, output.shape[-1]))
   scale = tf.convert_to_tensor(scale, tf.float32)
   output /= scale
