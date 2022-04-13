@@ -32,6 +32,8 @@ To install MIDI-DDSP via pip, simply run following command in a **python3.8** en
 pip install midi-ddsp
 ```
 
+MIDI-DDSP is developed using tensorflow 2.7.0. Newer tensorflow version should also work.
+
 ## Train MIDI-DDSP
 
 To train MIDI-DDSP, please first install midi-ddsp and clone the MIDI-DDSP repository:
