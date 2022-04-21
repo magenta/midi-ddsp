@@ -203,6 +203,18 @@ midi_audio_changed = synthesis_generator.reverb_module(midi_audio_changed, rever
 
 synthesized_audio_changed = midi_audio_changed  # The synthesized audio
 ```
+## Bibtex
+
+```
+@inproceedings{
+wu2022mididdsp,
+title={{MIDI}-{DDSP}: Detailed Control of Musical Performance via Hierarchical Modeling},
+author={Yusong Wu and Ethan Manilow and Yi Deng and Rigel Swavely and Kyle Kastner and Tim Cooijmans and Aaron Courville and Cheng-Zhi Anna Huang and Jesse Engel},
+booktitle={International Conference on Learning Representations},
+year={2022},
+url={https://openreview.net/forum?id=UseMOjWENv}
+}
+```
 
 ## Acknowledgment
 

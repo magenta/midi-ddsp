@@ -31,6 +31,9 @@ INST_NAME_TO_ABB_DICT = {
   'tuba': 'tba',
   'guitar': 'gtr'
 }
+# this might cause confusion but the instrument "guitar"
+# here is for compatibility with an internal dataset.
+# There is no guitar in the URMP dataset.
 
 INST_ABB_TO_NAME_DICT = {v: k for k, v in INST_NAME_TO_ABB_DICT.items()}
 
