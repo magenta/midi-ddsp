@@ -124,12 +124,12 @@ def get_piece_note_features(data, conditioning):
                               attack_level / 40 + 2.625).item()
 
       note_feature_dict = {
-        'amplitude_mean': amp_mean,
-        'amplitude_std': amp_std,
-        'vibrato_extend': vibrato_extend,
+        'volume': amp_mean,
+        'vol_fluc': amp_std,
+        'vibrato': vibrato_extend,
         'brightness': brightness,
-        'attack_level': attack_level,
-        'amplitudes_max_pos': amplitudes_max_pos,
+        'attack': attack_level,
+        'vol_peak_pos': amplitudes_max_pos,
         'note_length': off - on + 1,
         'note_pitch': data['midi'][on],
         'instrument_id': data['instrument_id'].item()
@@ -265,15 +265,15 @@ def plot_stats(note_params_reduced, instrument_id=None, show_plot=True,
                            (n['note_pitch'] != 0 and n[
                              'instrument_id'] == instrument_id)]
 
-  plot_save_expression_stats('vibrato_extend', note_params_reduced,
+  plot_save_expression_stats('vibrato', note_params_reduced,
                              show_plot=show_plot,
                              save_fig=save_fig, output_dir=output_dir)
 
-  plot_save_expression_stats('amplitude_mean', note_params_reduced,
+  plot_save_expression_stats('volume', note_params_reduced,
                              show_plot=show_plot,
                              save_fig=save_fig, output_dir=output_dir)
 
-  plot_save_expression_stats('amplitude_std', note_params_reduced,
+  plot_save_expression_stats('vol_fluc', note_params_reduced,
                              show_plot=show_plot,
                              save_fig=save_fig, output_dir=output_dir)
 
@@ -281,7 +281,7 @@ def plot_stats(note_params_reduced, instrument_id=None, show_plot=True,
                              show_plot=show_plot,
                              save_fig=save_fig, output_dir=output_dir)
 
-  plot_save_expression_stats('attack_level', note_params_reduced,
+  plot_save_expression_stats('attack', note_params_reduced,
                              show_plot=show_plot,
                              save_fig=save_fig, output_dir=output_dir)
 

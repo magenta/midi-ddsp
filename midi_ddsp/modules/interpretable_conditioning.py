@@ -318,12 +318,12 @@ def get_conditioning_dict(conditioning, q_pitch, onsets,
                           attack_level / 40 + 2.625)
 
   conditioning_dict = {
-    'amplitude_mean': amp_mean,
-    'amplitude_std': amp_std,
-    'vibrato_extend': vibrato_extend,
+    'volume': amp_mean,
+    'vol_fluc': amp_std,
+    'vibrato': vibrato_extend,
     'brightness': brightness,
-    'attack_level': attack_level,
+    'attack': attack_level,
     # 'vibrato_rate': vibrato_rate,
-    'amplitudes_max_pos': amplitudes_max_pos,
+    'vol_peak_pos': amplitudes_max_pos,
   }
   return conditioning_dict

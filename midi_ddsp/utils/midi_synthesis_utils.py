@@ -288,7 +288,7 @@ def fill_conditioning_df_with_mean(conditioning_df, note_expression_stat,
             note_expression_stat[instrument_abb][
               note_expression]
     value[conditioning_df['pitch'].values == 0] = 0
-    if note_expression == 'vibrato_extend':
+    if note_expression == 'vibrato':
       value[conditioning_df['note_length'].values < 50] = 0
     conditioning_df[note_expression] = value
   return conditioning_df
