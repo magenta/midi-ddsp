@@ -21,12 +21,12 @@ import pandas as pd
 import tensorflow as tf
 
 # Note expression keys. This list is strictly ordered.
-CONDITIONING_KEYS = ['amplitude_mean',
-                     'amplitude_std',
-                     'vibrato_extend',
+CONDITIONING_KEYS = ['volume',
+                     'vol_fluc',
+                     'vibrato',
                      'brightness',
-                     'attack_level',
-                     'amplitudes_max_pos']
+                     'attack',
+                     'vol_peak_pos']
 
 
 def to_length(data, dst_length=1000, axis=1):

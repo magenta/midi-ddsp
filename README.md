@@ -166,8 +166,8 @@ synthesized_audio = midi_audio  # The synthesized audio
 
 # Make all notes weak vibrato:
 conditioning_df_changed = conditioning_df.copy()
-note_vibrato = conditioning_df_changed['vibrato_extend'].value
-conditioning_df_changed['vibrato_extend'] = np.ones_like(conditioning_df['vibrato_extend'].values) * 0.1
+note_vibrato = conditioning_df_changed['vibrato'].value
+conditioning_df_changed['vibrato'] = np.ones_like(conditioning_df['vibrato'].values) * 0.1
 # Re-synthesize
 midi_audio_changed, midi_control_params_changed, midi_synth_params_changed = conditioning_df_to_audio(
   synthesis_generator, conditioning_df_changed, tf.constant([instrument_id]))
@@ -175,7 +175,7 @@ midi_audio_changed, midi_control_params_changed, midi_synth_params_changed = con
 synthesized_audio_changed = midi_audio_changed  # The synthesized audio
 
 # There are 6 note expression controls in conditioning_df that you could change:
-# 'amplitude_mean', 'amplitude_std', 'vibrato_extend', 'brightness', 'attack_level', 'amplitudes_max_pos'.
+# 'volume', 'vol_fluc', 'vibrato', 'brightness', 'attack', 'vol_peak_pos'.
 # Please refer to https://colab.research.google.com/github/magenta/midi-ddsp/blob/main/midi_ddsp/colab/MIDI_DDSP_Demo.ipynb#scrollTo=XfPPrdPu5sSy for the effect of each control. 
 
 # -----Adjust synthesis parameters and re-synthesize-----
