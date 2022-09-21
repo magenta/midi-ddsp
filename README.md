@@ -72,6 +72,8 @@ multi-GPU training. We recommend using a GPU with more than 24G of memory when t
 size of 16. For a GPU with less memory, please consider using a smaller batch size and change the batch size
 in `train_midi_ddsp.sh`.
 
+***The MIDI-DDSP cannot be installed on M1 Macbook. There is a problem with pip install package involves TensorFlow.**
+
 ## Try to play with MIDI-DDSP yourself!
 
 Please try out MIDI-DDSP
