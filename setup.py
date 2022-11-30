@@ -21,7 +21,7 @@ with open('README.md') as f:
 
 setuptools.setup(
   name='midi-ddsp',
-  version='0.2.5',
+  version='0.2.6',
   description='Synthesis of MIDI with DDSP',
   long_description=long_description,
   long_description_content_type='text/markdown',
@@ -32,6 +32,9 @@ setuptools.setup(
   packages=setuptools.find_packages(),
   scripts=[],
   install_requires=[
+    'tensorflowjs<3.19',
+    'crepe<0.0.13',
+    'note-seq<0.0.4',
     'ddsp==3.2.0',
     'pretty_midi',
     'music21',
